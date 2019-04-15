@@ -20,7 +20,7 @@ class Game extends Component {
             cardArray: [...this.state.memoryCards, ...this.state.memoryCards]
         }, () => {
             this.setState({
-            newArray: this.state.cardArray.sort(() => 0.5 - Math.random())
+                newArray: this.state.cardArray.sort(() => 0.5 - Math.random())
             })
         })
     }
@@ -34,30 +34,40 @@ class Game extends Component {
     
         this.setState({
             tempArray: [...this.state.tempArray, item]
-        })
-
-        this.cardCounter(item);
+        }, () => {
+            this.cardCounter(this.state.tempArray)
+        });
     }
 
     cardCounter(item) {
         this.setState({
             count: this.state.count + 1
+        }, () => {
+            console.log(item)
+            this.checkCoupleCards(item)
+            if(this.state.count > 1) {
+                this.setState({
+                    count: 0,
+                    tempArray: []
+                })
+            } else {
+            //    console.log('hello')
+            }
         });
-
-        if(this.state.count > 0) {
-            this.nextRound(item); 
-        }
     }
 
-    nextRound(getCard) {
-        this.setState({
-            tempArray: [...this.state.tempArray, getCard]
-        });
-        console.log(this.state.tempArray);
+    checkCoupleCards(item) {
+        // item
+        item.map((keyName, i ) => ({
+        }, this.checkMatch(keyName.name, keyName.indexNumber)))
+    }
+
+
+    checkMatch(cardName, duplicationCheck) {
+        console.log(cardName, duplicationCheck);
     }
 
     render() {
-        // console.log(this.state.tempArray.length);
         return (
             <ul>
                 <button onClick={() => this.shuffleCard()}>Click</button>

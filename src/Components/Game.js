@@ -11,7 +11,9 @@ class Game extends Component {
             newArray: [],
             tempArray: [],
             arrayHere: [],
-            count: 0
+            count: 0,
+            score: 0,
+            flipped: false
         }
     }
 
@@ -28,12 +30,12 @@ class Game extends Component {
     checkCard(cardName, index) {
         const item = {
             name: cardName,
-            indexNumber: index,
-            flipped: true
-        };             
+            indexNumber: index
+        };           
     
         this.setState({
-            tempArray: [...this.state.tempArray, item]
+            tempArray: [...this.state.tempArray, item],
+            flipped: !this.state.flipped
         }, () => {
             this.cardCounter(this.state.tempArray)
         });
@@ -43,9 +45,8 @@ class Game extends Component {
         this.setState({
             count: this.state.count + 1
         }, () => {
-            console.log(item)
-            this.checkCoupleCards(item)
-            if(this.state.count > 1) {
+            this.checkCoupleCards(item, this.state.count);
+            if(item.length > 1) {
                 this.setState({
                     count: 0,
                     tempArray: []
@@ -56,15 +57,28 @@ class Game extends Component {
         });
     }
 
-    checkCoupleCards(item) {
-        // item
-        item.map((keyName, i ) => ({
-        }, this.checkMatch(keyName.name, keyName.indexNumber)))
+    checkCoupleCards(item, counter) {
+        let valueArr = item.map(function(keyName, i) {
+            return keyName.name;
+        });
+
+        let isDuplicate = valueArr.some(function(keyName, index) {
+            return valueArr.indexOf(keyName) !== index;
+        });
+
+        this.duplicationCheck(isDuplicate, counter);
     }
 
-
-    checkMatch(cardName, duplicationCheck) {
-        console.log(cardName, duplicationCheck);
+    duplicationCheck(cardName, counter) {
+        console.log(counter)
+        if(cardName) {
+            console.log('hooray');
+            // add some points
+        } else if (!cardName && counter === 2) {
+            console.log('no try again');
+            // remove some points
+        }
+        console.log(this.state.tempArray);
     }
 
     render() {
@@ -72,7 +86,7 @@ class Game extends Component {
             <ul>
                 <button onClick={() => this.shuffleCard()}>Click</button>
                 {this.state.cardArray.map((items, index) => (
-                    <li className="card" key={index} onClick={() => this.checkCard(items, index)}>{items}</li>
+                    <li className={`card ${this.state.flipped}`} key={index} onClick={() => this.checkCard(items, index)}>{items}</li>
                 ))}
             </ul>
         )

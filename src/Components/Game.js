@@ -13,7 +13,7 @@ class Game extends Component {
             arrayHere: [],
             count: 0,
             score: 0,
-            flipped: false
+            flipped: {}
         }
     }
 
@@ -31,12 +31,20 @@ class Game extends Component {
         const item = {
             name: cardName,
             indexNumber: index
-        };           
-    
-        this.setState({
+        }; 
+        
+        // check the part where you should look at
+        const newFlipStatus = this.state.flipped;
+
+        console.log(newFlipStatus);
+
+        this.setState(state =>({
             tempArray: [...this.state.tempArray, item],
-            flipped: !this.state.flipped
-        }, () => {
+            flipped: {
+                ...state.flipped,
+                [index]: !state.flipped[index]
+            }
+        }), () => {
             this.cardCounter(this.state.tempArray)
         });
     }
@@ -70,7 +78,6 @@ class Game extends Component {
     }
 
     duplicationCheck(cardName, counter) {
-        console.log(counter)
         if(cardName) {
             console.log('hooray');
             // add some points
@@ -86,7 +93,7 @@ class Game extends Component {
             <ul>
                 <button onClick={() => this.shuffleCard()}>Click</button>
                 {this.state.cardArray.map((items, index) => (
-                    <li className={`card ${this.state.flipped}`} key={index} onClick={() => this.checkCard(items, index)}>{items}</li>
+                    <li className={this.state.flipped[index] ? 'card' : 'card true'} key={index} onClick={() => this.checkCard(items, index)}>{items}</li>
                 ))}
             </ul>
         )

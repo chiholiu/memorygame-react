@@ -38,7 +38,20 @@ ul {
 
 .card {
   border: 1px solid black;
-  width: 200px;
-  height: 200px;
-  float: left;
+  width: 150px;
+  height: 150px;
+  display: inline-block;
+
+  position: relative;
+  cursor: pointer;
+  transform-origin: center right;
+  transition: transform 1s;
+}
+
+.card.flipped:not([disabled]) {
+  transform: translateX(-100%) rotateY(-180deg);
+}
+
+div[disabled] {
+  pointer-events: none;
 }

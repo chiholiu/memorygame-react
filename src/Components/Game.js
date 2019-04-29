@@ -13,11 +13,14 @@ class Game extends Component {
             arrayHere: [],
             count: 0,
             score: 0,
-            flipped: {}
+            flipped: {},
+            timer: '',
+            disabled: false
         }
     }
 
     shuffleCard() {
+
         this.setState({
             cardArray: [...this.state.memoryCards, ...this.state.memoryCards]
         }, () => {
@@ -33,19 +36,20 @@ class Game extends Component {
             indexNumber: index
         }; 
         
-        // check the part where you should look at
         const newFlipStatus = this.state.flipped;
-
-        console.log(newFlipStatus);
-
+        
         this.setState(state =>({
             tempArray: [...this.state.tempArray, item],
             flipped: {
                 ...state.flipped,
                 [index]: !state.flipped[index]
+            },
+            disabled: {
+                ...state.disabled,
+                [index]: true
             }
         }), () => {
-            this.cardCounter(this.state.tempArray)
+            this.cardCounter(this.state.tempArray);
         });
     }
 
@@ -60,7 +64,7 @@ class Game extends Component {
                     tempArray: []
                 })
             } else {
-            //    console.log('hello')
+                //    console.log('hello')
             }
         });
     }
@@ -80,20 +84,53 @@ class Game extends Component {
     duplicationCheck(cardName, counter) {
         if(cardName) {
             console.log('hooray');
+            this.disableClick();
             // add some points
-        } else if (!cardName && counter === 2) {
-            console.log('no try again');
+            
+        } else if (!cardName && counter == 2) {
+            this.checkTempCards(this.state.tempArray);
             // remove some points
         }
-        console.log(this.state.tempArray);
+    }
+
+    disableClick(index) {
+        this.setState(state =>({
+            disabled: {
+                ...state.disabled,
+                [index]: !this.state.disabled
+            }
+        }));
+    }
+
+    checkTempCards(checkCards) {        
+        {checkCards.map((item) => {
+            this.checkCards(item.indexNumber);
+        })};
+    }
+
+    checkCards(apple) {
+        let cards = document.querySelectorAll('.card');
+
+        for(let i = 0; i < cards.length; i++) {
+            if(cards[i].id == apple) {
+                this.state.timer = setTimeout(function() {
+                    cards[i].classList.remove('flipped');
+                        
+                    console.log(cards[i]);
+                }, 2000);
+            }
+        }
     }
 
     render() {
         return (
             <ul>
-                <button onClick={() => this.shuffleCard()}>Click</button>
+                <div>
+                    <button onClick={() => this.shuffleCard()}>Click</button>
+                </div>
+
                 {this.state.cardArray.map((items, index) => (
-                    <li className={this.state.flipped[index] ? 'card' : 'card true'} key={index} onClick={() => this.checkCard(items, index)}>{items}</li>
+                    <li className={this.state.flipped[index] ? 'card flipped' : 'card' } key={index} id={index} onClick={() => this.checkCard(items, index)} disabled={this.state.disabled[index] ? 'disabled' : ''} >{items}</li>
                 ))}
             </ul>
         )
